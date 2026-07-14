@@ -6,8 +6,9 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
-
-
+const dashboardRoutes = require("./routes/dashboardRoutes");
+// Connect MongoDB
+connectDB();
 // Create Express App
 const app = express();
 
@@ -16,9 +17,11 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+
 app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);
-
+app.use("/api/faculty", facultyRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Default Route
 app.get("/", (req, res) => {
