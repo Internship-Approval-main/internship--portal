@@ -1,0 +1,50 @@
+.chatbot-btn {
+
+    position: fixed;
+
+    bottom: 30px;
+
+    right: 30px;
+
+    width: 72px;
+
+    height: 72px;
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    z-index: 9999;
+
+    transition: all 0.3s ease;
+
+}
+
+.chatbot-img{
+
+    width:100%;
+
+    height:100%;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    box-shadow:
+    0 10px 30px rgba(59,130,246,.35);
+
+}
+
+.chatbot-btn:hover{
+
+    transform:translateY(-5px) scale(1.08);
+
+}
+
+.chatbot-btn:active{
+
+    transform:scale(.95);
+
+}

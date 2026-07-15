@@ -1,0 +1,55 @@
+.sidebar{
+
+width:250px;
+
+background:#003366;
+
+min-height:100vh;
+
+color:white;
+
+position:fixed;
+
+}
+
+.sidebar h2{
+
+text-align:center;
+
+padding:20px;
+
+font-size:26px;
+
+}
+
+.sidebar ul{
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+padding:18px 25px;
+
+transition:.3s;
+
+}
+
+.sidebar li:hover{
+
+background:#00509e;
+
+}
+
+.sidebar a{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+font-size:17px;
+
+}
