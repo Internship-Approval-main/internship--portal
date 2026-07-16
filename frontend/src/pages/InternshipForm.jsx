@@ -1,109 +1,166 @@
 import axios from "axios";
 import { useState } from "react";
-import './InternshipForm.css'
+import "./InternshipForm.css";
 
-// 📅 Helper function to calculate minimum weeks ahead
+// Helper function to calculate minimum internship duration (6 weeks)
+// Uses local date methods to prevent UTC timezone offset issues
 const addWeeks = (dateString, weeks) => {
-  if (!dateString) return '';
+  if (!dateString) return "";
   const date = new Date(dateString);
   date.setDate(date.getDate() + weeks * 7);
-  return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD format
+  
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  
+  return `${yyyy}-${mm}-${dd}`;
 };
 
 export default function InternshipForm() {
   const [form, setForm] = useState({
     studentName: "",
     studentEmail: "",
-    srn: "",  // Fixed missing initial state from your template
-    cgpa: "", // Fixed missing initial state from your template
+    srn: "",
+    cgpa: "",
+    semester: "",
+
     startDate: "",
     endDate: "",
+
     campus: "On Campus",
+
     company: "",
+    companyWebsite: "", // <-- ADDED: Company Website
     role: "",
+
     managerName: "",
     managerEmail: "",
-    offerLetter: null, // For file upload
+
+    mentorName: "",
+    mentorEmail: "",
+
     internshipNature: "Paid",
+
     category: "Industry",
+
     researchCenter: "",
     otherResearchCenter: "",
+
     stipend: "",
+
+    offerLetter: null,
   });
 
+  // Handle Input Change
   const handleChange = (e) => {
-  const { name, value, files } = e.target;
+    const { name, value, type, files } = e.target;
 
-  setForm((prev) => {
-    const updatedForm = {
-      ...prev,
-      [name]: files ? files[0] : value,
-    };
+    setForm((prev) => {
+      const updated = {
+        ...prev,
+        [name]: type === "file" ? files[0] : value,
+      };
 
-    // Validation Rule: Reset invalid end dates if start date moves ahead
-    if (name === "startDate" && updatedForm.endDate) {
-      const minAllowedDate = addWeeks(value, 6);
-
-      if (updatedForm.endDate < minAllowedDate) {
-        updatedForm.endDate = "";
+      // Reset End Date if Start Date changes and is now invalid
+      if (name === "startDate" && updated.endDate) {
+        const minDate = addWeeks(value, 6);
+        if (updated.endDate < minDate) {
+          updated.endDate = "";
+        }
       }
-    }
 
-    return updatedForm;
-  });
-};
+      return updated;
+    });
+  };
 
+  // Submit Form
   const submit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append("srn", form.srn);
-    formData.append("student_name", form.studentName);
-    formData.append("student_email", form.studentEmail);
-    formData.append("semester", "8");
+      formData.append("student_name", form.studentName);
+      formData.append("student_email", form.studentEmail);
+      formData.append("srn", form.srn);
+      formData.append("cgpa", form.cgpa);
+      formData.append("semester", form.semester);
 
-    formData.append("campus_type", form.campus);
-    formData.append("internship_type", form.category);
-    formData.append("company", form.company);
-    formData.append("role", form.role);
-    formData.append("start_date", form.startDate);
-    formData.append("end_date", form.endDate);
-    formData.append("manager_name", form.managerName);
-    formData.append("manager_email", form.managerEmail);
+      formData.append("campus_type", form.campus);
 
-    formData.append(
-      "research_centre",
-      form.researchCenter === "Other"
-        ? form.otherResearchCenter
-        : form.researchCenter
-    );
+      formData.append("company", form.company);
+      formData.append("company_website", form.companyWebsite); // <-- ADDED
+      formData.append("role", form.role);
 
-    // Upload PDF
-    if (form.offerLetter) {
-      formData.append("offerLetter", form.offerLetter);
-    }
+      formData.append("manager_name", form.managerName);
+      formData.append("manager_email", form.managerEmail);
 
-    await axios.post(
-      "http://localhost:5000/api/student/register",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      formData.append("mentor_name", form.mentorName);
+      formData.append("mentor_email", form.mentorEmail);
+
+      formData.append("start_date", form.startDate);
+      formData.append("end_date", form.endDate);
+
+      formData.append("internship_nature", form.internshipNature);
+      formData.append("internship_type", form.category);
+
+      formData.append(
+        "research_centre",
+        form.researchCenter === "Other"
+          ? form.otherResearchCenter
+          : form.researchCenter
+      );
+
+      formData.append("stipend", form.stipend);
+
+      if (form.offerLetter) {
+        formData.append("offerLetter", form.offerLetter);
       }
-    );
 
-    alert("Application submitted successfully!");
+      await axios.post(
+        "http://localhost:5000/api/student/register",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-  } catch (err) {
-    console.error(err);
-    alert("Submission failed.");
-  }
-};
-  // Enforces 6 weeks. Adjust the number 6 below to change the duration window.
-  const minEndDate = form.startDate ? addWeeks(form.startDate, 6) : '';
+      alert("Application Submitted Successfully!");
+
+      // Reset form on success
+      setForm({
+        studentName: "",
+        studentEmail: "",
+        srn: "",
+        cgpa: "",
+        semester: "",
+        startDate: "",
+        endDate: "",
+        duration: "",
+        campus: "On Campus",
+        company: "",
+        companyWebsite: "", // <-- ADDED
+        role: "",
+        managerName: "",
+        managerEmail: "",
+        mentorName: "",
+        mentorEmail: "",
+        internshipNature: "Paid",
+        category: "Industry",
+        researchCenter: "",
+        otherResearchCenter: "",
+        stipend: "",
+        offerLetter: null,
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Submission Failed!");
+    }
+  };
+
+  const minEndDate = form.startDate ? addWeeks(form.startDate, 6) : "";
 
   return (
     <div className="max-w-5xl mx-auto p-8 bg-white rounded-xl shadow-lg">
@@ -112,7 +169,6 @@ export default function InternshipForm() {
       </h1>
 
       <form onSubmit={submit} className="space-y-6">
-
         {/* Student Details */}
         <div className="grid md:grid-cols-2 gap-5">
           <input
@@ -122,6 +178,7 @@ export default function InternshipForm() {
             value={form.studentName}
             onChange={handleChange}
             className="border rounded-lg p-3"
+            required
           />
 
           <input
@@ -131,133 +188,194 @@ export default function InternshipForm() {
             value={form.studentEmail}
             onChange={handleChange}
             className="border rounded-lg p-3"
+            required
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid md:grid-cols-3 gap-5">
           <input
             type="text"
             name="srn"
             placeholder="Enter SRN"
-            value={form.srn || ""}
+            value={form.srn}
             onChange={handleChange}
             className="border rounded-lg p-3"
+            required
           />
 
+          <select
+            name="semester"
+            value={form.semester}
+            onChange={handleChange}
+            className="border rounded-lg p-3"
+            required
+          >
+            <option value="">Select Semester</option>
+            <option value="4">Semester 4</option>
+            <option value="6">Semester 6</option>
+            <option value="8">Semester 8</option>
+          </select>
+
           <input
-  type="number"
-  name="cgpa"
-  placeholder="Enter your GPA"
-  value={form.cgpa || ""}
-  onChange={handleChange}
-  className="border rounded-lg p-3"
-/>
+            type="number"
+            step="0.01"
+            name="cgpa"
+            placeholder="Enter your CGPA"
+            value={form.cgpa}
+            onChange={handleChange}
+            className="border rounded-lg p-3"
+            required
+          />
         </div>
 
         {/* Dates section with 6-week constraint */}
         <div className="grid md:grid-cols-2 gap-5">
-          {/* Start Date Box */}
           <div className="relative">
             <label className="absolute -top-2 left-3 bg-white px-1 text-xs text-gray-600">
               Start Date
             </label>
-            <input 
-              type="date" 
-              name="startDate" 
-              value={form.startDate} 
-              onChange={handleChange} 
-              className="border rounded-lg p-3 w-full" 
+            <input
+              type="date"
+              name="startDate"
+              value={form.startDate}
+              onChange={handleChange}
+              className="border rounded-lg p-3 w-full"
+              required
             />
           </div>
 
-          {/* End Date Box */}
           <div className="relative">
             <label className="absolute -top-2 left-3 bg-white px-1 text-xs text-gray-600">
               End Date (Min 6 weeks)
             </label>
-            <input 
-              type="date" 
-              name="endDate" 
-              value={form.endDate} 
-              onChange={handleChange} 
-              min={minEndDate} // Gray out illegal dates
-              disabled={!form.startDate} // Prevent selection before start date is set
-              className="border rounded-lg p-3 w-full disabled:bg-gray-100 disabled:cursor-not-allowed" 
+            <input
+              type="date"
+              name="endDate"
+              value={form.endDate}
+              onChange={handleChange}
+              min={minEndDate} 
+              disabled={!form.startDate} 
+              className="border rounded-lg p-3 w-full disabled:bg-gray-100 disabled:cursor-not-allowed"
+              required
             />
           </div>
+          <div className="text-sm text-gray-500">
+          <input
+            type="number"
+            step="1"
+            name="duration"
+            placeholder="Enter the duration of the internship in weeks"
+            value={form.duration}
+            onChange={handleChange}
+            className="border rounded-lg p-3 w-full"
+            required
+          />
+          </div>
         </div>
+        
 
-        {/* Campus */}
+        {/* Campus Selection */}
         <select
           name="campus"
           value={form.campus}
           onChange={handleChange}
           className="border rounded-lg p-3 w-full"
         >
-          <option>On Campus</option>
-          <option>Off Campus</option>
+          <option value="On Campus">On Campus</option>
+          <option value="Off Campus">Off Campus</option>
         </select>
 
-        {/* Company Details */}
-        {form.campus === "Off Campus" && (
+        {/* On Campus Details (Shows Mentor fields) */}
+        {form.campus === "On Campus" && (
           <div className="grid md:grid-cols-2 gap-5">
             <input
               type="text"
               name="company"
-              placeholder="Company/ Institution Name"
+              placeholder="Company / Institution Name"
               value={form.company}
               onChange={handleChange}
               className="border rounded-lg p-3"
             />
-
+            <input
+              type="url"
+              name="companyWebsite"
+              placeholder="Company Website Link (e.g. https://...)"
+              value={form.companyWebsite}
+              onChange={handleChange}
+              className="border rounded-lg p-3"
+            />
             <input
               type="text"
               name="role"
               placeholder="Role"
               value={form.role}
               onChange={handleChange}
+              className="border rounded-lg p-3 md:col-span-2"
+            />
+            <input
+              type="text"
+              name="mentorName"
+              placeholder="Mentor Name/Manager Name"
+              value={form.mentorName}
+              onChange={handleChange}
               className="border rounded-lg p-3"
             />
+            <input
+              type="email"
+              name="mentorEmail"
+              placeholder="Mentor Email/Manager Email"
+              value={form.mentorEmail}
+              onChange={handleChange}
+              className="border rounded-lg p-3"
+            />
+            
+          </div>
+        )}
 
+        {/* Off Campus Details (Shows Company, Website, & Manager fields) */}
+        {form.campus === "Off Campus" && (
+          <div className="grid md:grid-cols-2 gap-5">
+            <input
+              type="text"
+              name="company"
+              placeholder="Company / Institution Name"
+              value={form.company}
+              onChange={handleChange}
+              className="border rounded-lg p-3"
+            />
+            {/* NEW FIELD: Company Website */}
+            <input
+              type="url"
+              name="companyWebsite"
+              placeholder="Company Website Link (e.g. https://...)"
+              value={form.companyWebsite}
+              onChange={handleChange}
+              className="border rounded-lg p-3"
+            />
+            <input
+              type="text"
+              name="role"
+              placeholder="Role"
+              value={form.role}
+              onChange={handleChange}
+              className="border rounded-lg p-3 md:col-span-2"
+            />
             <input
               type="text"
               name="managerName"
-              placeholder="Manager/ Supervisor Name"
+              placeholder="Manager / Supervisor Name"
               value={form.managerName}
               onChange={handleChange}
               className="border rounded-lg p-3"
             />
-
             <input
               type="email"
               name="managerEmail"
-              placeholder="Manager/ Supervisor Email"
+              placeholder="Manager / Supervisor Email"
               value={form.managerEmail}
               onChange={handleChange}
               className="border rounded-lg p-3"
             />
-            {/* Offer Letter Upload */}
-          <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-               Upload Offer Letter (PDF)
-          </label>
-
-           <input
-           type="file"
-           name="offerLetter"
-           accept=".pdf,application/pdf"
-           onChange={handleChange}
-           className="border rounded-lg p-3 w-full file:mr-4 file:py-2 file:px-4
-               file:rounded-lg file:border-0 file:bg-blue-600
-               file:text-white hover:file:bg-blue-700"
-           />
-
-          {form.offerLetter && (
-          <p className="text-sm text-green-600 mt-2">
-          Selected: {form.offerLetter.name}
-          </p>
-      )}
-        </div>
           </div>
         )}
 
@@ -268,8 +386,8 @@ export default function InternshipForm() {
           onChange={handleChange}
           className="border rounded-lg p-3 w-full"
         >
-          <option>Paid</option>
-          <option>Unpaid</option>
+          <option value="Paid">Paid</option>
+          <option value="Unpaid">Unpaid</option>
         </select>
 
         {/* Stipend */}
@@ -277,7 +395,7 @@ export default function InternshipForm() {
           <input
             type="number"
             name="stipend"
-            placeholder="Monthly Stipend"
+            placeholder="Monthly Stipend Amount"
             value={form.stipend}
             onChange={handleChange}
             className="border rounded-lg p-3 w-full"
@@ -291,51 +409,70 @@ export default function InternshipForm() {
           onChange={handleChange}
           className="border rounded-lg p-3 w-full"
         >
-          <option>Industry</option>
-          <option>Research</option>
+          <option value="Industry">Industry</option>
+          <option value="Research">Research</option>
         </select>
 
         {/* Research Center */}
         {form.category === "Research" && (
-          <select
-            name="researchCenter"
-            value={form.researchCenter}
-            onChange={handleChange}
-            className="border rounded-lg p-3 w-full"
-          >
-            <option value="">Select Research Centre</option>
-            <option value="CCBD">CCBD</option>
-            <option value="ISFCR">ISFCR</option>
-            <option value="CSDML">CSDML</option>
-            <option value="PiLabs">Pi Labs</option>
-            <option value="CHeal">CHeal</option>
-            <option value="IOT">IOT</option>
-            <option value="PVL Labs">PVL Labs</option>
-            <option value="RAAS">RAAS</option>
-            <option value="Other">Other</option>
-          </select>
+          <div className="grid md:grid-cols-2 gap-5">
+            <select
+              name="researchCenter"
+              value={form.researchCenter}
+              onChange={handleChange}
+              className="border rounded-lg p-3 w-full"
+            >
+              <option value="">Select Research Centre</option>
+              <option value="CCBD">CCBD</option>
+              <option value="ISFCR">ISFCR</option>
+              <option value="CSDML">CSDML</option>
+              <option value="PiLabs">Pi Labs</option>
+              <option value="CHeal">CHeal</option>
+              <option value="IOT">IOT</option>
+              <option value="PVL Labs">PVL Labs</option>
+              <option value="RAAS">RAAS</option>
+              <option value="Other">Other</option>
+            </select>
+
+            {form.researchCenter === "Other" && (
+              <input
+                type="text"
+                name="otherResearchCenter"
+                placeholder="Enter Research Centre Name"
+                value={form.otherResearchCenter}
+                onChange={handleChange}
+                className="border rounded-lg p-3 w-full"
+              />
+            )}
+          </div>
         )}
 
-        {/* Other Research Center */}
-        {form.category === "Research" && form.researchCenter === "Other" && (
+        {/* Offer Letter Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload Offer Letter (PDF)
+          </label>
           <input
-            type="text"
-            name="otherResearchCenter"
-            placeholder="Enter Research Centre Name"
-            value={form.otherResearchCenter}
+            type="file"
+            name="offerLetter"
+            accept=".pdf,application/pdf"
             onChange={handleChange}
-            className="border rounded-lg p-3 w-full"
+            className="border rounded-lg p-3 w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
           />
-        )}
+          {form.offerLetter && (
+            <p className="text-sm text-green-600 mt-2 font-medium">
+              ✓ Selected: {form.offerLetter.name}
+            </p>
+          )}
+        </div>
 
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-semibold text-lg"
+          className="w-full bg-blue-700 hover:bg-blue-800 text-white py-3 rounded-lg font-semibold text-lg transition-colors"
         >
-          Submit
+          Submit Application
         </button>
-
       </form>
     </div>
   );
