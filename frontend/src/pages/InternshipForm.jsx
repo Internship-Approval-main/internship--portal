@@ -23,6 +23,7 @@ export default function InternshipForm() {
     role: "",
     managerName: "",
     managerEmail: "",
+    offerLetter: null, // For file upload
     internshipNature: "Paid",
     category: "Industry",
     researchCenter: "",
@@ -31,102 +32,76 @@ export default function InternshipForm() {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value, files } = e.target;
 
-    setForm((prev) => {
-      const updatedForm = { ...prev, [name]: value };
+  setForm((prev) => {
+    const updatedForm = {
+      ...prev,
+      [name]: files ? files[0] : value,
+    };
 
-      // 🔒 Validation Rule: Reset invalid end dates if start date moves ahead
-      if (name === 'startDate' && updatedForm.endDate) {
-        const minAllowedDate = addWeeks(value, 6); // Set to 6 weeks duration constraint
-        if (updatedForm.endDate < minAllowedDate) {
-          updatedForm.endDate = ''; // Auto-clear if constraint is breached
-        }
+    // Validation Rule: Reset invalid end dates if start date moves ahead
+    if (name === "startDate" && updatedForm.endDate) {
+      const minAllowedDate = addWeeks(value, 6);
+
+      if (updatedForm.endDate < minAllowedDate) {
+        updatedForm.endDate = "";
       }
+    }
 
-      return updatedForm;
-    });
-  };
+    return updatedForm;
+  });
+};
 
   const submit = async (e) => {
-
   e.preventDefault();
 
   try {
+    const formData = new FormData();
 
-    const payload = {
+    formData.append("srn", form.srn);
+    formData.append("student_name", form.studentName);
+    formData.append("student_email", form.studentEmail);
+    formData.append("semester", "8");
 
-      srn: form.srn,
+    formData.append("campus_type", form.campus);
+    formData.append("internship_type", form.category);
+    formData.append("company", form.company);
+    formData.append("role", form.role);
+    formData.append("start_date", form.startDate);
+    formData.append("end_date", form.endDate);
+    formData.append("manager_name", form.managerName);
+    formData.append("manager_email", form.managerEmail);
 
-      student_name: form.studentName,
+    formData.append(
+      "research_centre",
+      form.researchCenter === "Other"
+        ? form.otherResearchCenter
+        : form.researchCenter
+    );
 
-      student_email: form.studentEmail,
-
-      semester: "8",
-
-      placements: [
-
-        {
-
-          campus_type: form.campus,
-
-          internship_type: form.category,
-
-          company: form.company,
-
-          role: form.role,
-
-          start_date: form.startDate,
-
-          end_date: form.endDate,
-
-          manager_name: form.managerName,
-
-          manager_email: form.managerEmail,
-
-          research_centre:
-            form.researchCenter === "Other"
-              ? form.otherResearchCenter
-              : form.researchCenter
-
-        }
-
-      ]
-
-    };
-
-    const token = localStorage.getItem("authToken");
-
-const response = await axios.post(
-
-  "http://localhost:5000/api/student/register",
-
-  payload,
-
-  {
-    headers: {
-      Authorization: `Bearer ${token}`
+    // Upload PDF
+    if (form.offerLetter) {
+      formData.append("offerLetter", form.offerLetter);
     }
+
+    await axios.post(
+      "http://localhost:5000/api/student/register",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    alert("Application submitted successfully!");
+
+  } catch (err) {
+    console.error(err);
+    alert("Submission failed.");
   }
-
-);
-
-    alert(response.data.message);
-
-    console.log(response.data);
-
-  }
-
-  catch (error) {
-
-    console.log(error);
-
-    alert("Registration Failed");
-
-  }
-
 };
-
   // Enforces 6 weeks. Adjust the number 6 below to change the duration window.
   const minEndDate = form.startDate ? addWeeks(form.startDate, 6) : '';
 
@@ -261,6 +236,28 @@ const response = await axios.post(
               onChange={handleChange}
               className="border rounded-lg p-3"
             />
+            {/* Offer Letter Upload */}
+          <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+               Upload Offer Letter (PDF)
+          </label>
+
+           <input
+           type="file"
+           name="offerLetter"
+           accept=".pdf,application/pdf"
+           onChange={handleChange}
+           className="border rounded-lg p-3 w-full file:mr-4 file:py-2 file:px-4
+               file:rounded-lg file:border-0 file:bg-blue-600
+               file:text-white hover:file:bg-blue-700"
+           />
+
+          {form.offerLetter && (
+          <p className="text-sm text-green-600 mt-2">
+          Selected: {form.offerLetter.name}
+          </p>
+      )}
+        </div>
           </div>
         )}
 
