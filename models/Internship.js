@@ -1,30 +1,16 @@
 const mongoose = require("mongoose");
 
-const placementSchema = new mongoose.Schema({
-
-    campus_type: String,
-
-    internship_type: String,
-
-    company: String,
-
-    role: String,
-
-    start_date: String,
-
-    end_date: String,
-
-    manager_name: String,
-
-    manager_email: String,
-
-    research_centre: String
-
-});
-
 const internshipSchema = new mongoose.Schema({
 
-    srn: String,
+    // -------------------------
+    // Student Details
+    // -------------------------
+
+    srn: {
+        type: String,
+        required: true,
+        unique: true
+    },
 
     student_name: String,
 
@@ -32,19 +18,143 @@ const internshipSchema = new mongoose.Schema({
 
     semester: String,
 
-    placements: [placementSchema],
+
+
+    // -------------------------
+    // Company Details
+    // -------------------------
+
+    campus_type: String,
+
+    internship_type: String,
+
+    company: String,
+
+    company_website: String,
+
+    internship_domain: String,
+
+    location: String,
+
+
+
+    // -------------------------
+    // Internship Details
+    // -------------------------
+
+    role: String,
+
+    start_date: String,
+
+    end_date: String,
+
+    paid: Boolean,
+
+    stipend: String,
+
+
+
+    // -------------------------
+    // Project Details
+    // -------------------------
+
+    project_description: String,
+
+    tech_stack: String,
+
+
+
+    // -------------------------
+    // Offer Letter
+    // -------------------------
+
+    offer_letter: String,
+
+
+
+    // -------------------------
+    // Evaluation
+    // -------------------------
+
+    company_evaluation: Boolean,
+
+    evaluation_mode: {
+        type: String,
+        enum: ["Company", "PES"],
+        default: "PES"
+    },
+
+
+
+    // -------------------------
+    // Manager Details
+    // -------------------------
+
+    manager_name: String,
+
+    manager_designation: String,
+
+    manager_email: String,
+
+    manager_contact: String,
+
+
+
+    // -------------------------
+    // Workflow
+    // -------------------------
 
     status: {
 
         type: String,
 
-        default: "Pending Faculty Approval"
+        default: "Submitted"
 
     },
 
+    current_stage: {
+
+        type: String,
+
+        default: "Scrutiny Verification"
+
+    },
+
+
+
+    // -------------------------
+    // Remarks
+    // -------------------------
+
+    scrutiny_remarks: String,
+
+    faculty_remarks: String,
+
+
+
+    // -------------------------
+    // Evaluation Result
+    // -------------------------
+
+    total_marks: Number,
+
     grade: String,
 
-    report: String
+    credits: Number,
+
+
+
+    // -------------------------
+    // Student Report
+    // -------------------------
+
+    report: String,
+
+
+
+}, {
+
+    timestamps: true
 
 });
 

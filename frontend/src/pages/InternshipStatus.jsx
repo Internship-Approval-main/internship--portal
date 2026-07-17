@@ -34,7 +34,7 @@ const srn = student?.srn;
     setError("");
 
     try {
-      const token = localStorage.getItem("authToken");
+      const token = localStorage.getItem("token");
 
 const response = await fetch(`${API_URL}/${srn}`, {
   headers: {
@@ -47,11 +47,22 @@ const response = await fetch(`${API_URL}/${srn}`, {
       }
 
       const data = await response.json();
-
+       console.log(data);
       // Expecting the backend to return: { internship, timeline, progress }
-      setInternship(data.internship);
-      setTimeline(data.timeline || []);
-      setProgress(data.progress ?? 0);
+      setInternship(data.data);
+console.log("Internship:", data.data);
+setTimeline([
+  {
+    title: "Application Submitted",
+    completed: true
+  },
+  {
+    title: data.data.stage,
+    completed: true
+  }
+]);
+
+setProgress(50);
     } catch (err) {
       setError(err.message || "Something went wrong while fetching status.");
     } finally {
@@ -190,22 +201,22 @@ const response = await fetch(`${API_URL}/${srn}`, {
 
           <div className="info-row">
             <span>Company</span>
-            <strong>{internship.placements?.[0]?.company || "-"}</strong>
+            <strong>{internship.company|| "-"}</strong>
           </div>
 
           <div className="info-row">
             <span>Role</span>
-            <strong>{internship.placements?.[0]?.role || "-"}</strong>
+            <strong>{internship.role || "-"}</strong>
           </div>
 
           <div className="info-row">
             <span>Start Date</span>
-            <strong>{internship.placements?.[0]?.start_date || "-"}</strong>
+            <strong>{internship.startDate || "-"}</strong>
           </div>
 
           <div className="info-row">
             <span>End Date</span>
-            <strong>{internship.placements?.[0]?.end_date || "-"}</strong>
+            <strong>{internship.endDate || "-"}</strong>
           </div>
         </div>
 
@@ -224,16 +235,19 @@ const response = await fetch(`${API_URL}/${srn}`, {
           </div>
 
           <div className="info-row">
-            <span>Coordinator</span>
-            <strong>{internship.coordinator}</strong>
-          </div>
+  <span>Current Stage</span>
+  <strong>{internship.stage}</strong>
+</div>
 
-          <div className="info-row">
-            <span>Evaluation</span>
-            <span className={`badge ${evaluationClass}`}>
-              {internship.evaluation}
-            </span>
-          </div>
+<div className="info-row">
+  <span>Evaluation Mode</span>
+  <strong>{internship.evaluationMode}</strong>
+</div>
+
+<div className="info-row">
+  <span>Faculty Remarks</span>
+  <strong>{internship.facultyRemarks || "-"}</strong>
+</div>
         </div>
       </div>
 

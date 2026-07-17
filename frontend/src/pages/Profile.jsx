@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../services/api";
 import './Profile.css'
 
 // Change these to your backend's actual endpoints
@@ -23,9 +23,7 @@ const Profile = () => {
     setError("");
 
     try {
-      const response = await axios.get(PROFILE_URL, {
-        withCredentials: true, // remove if you're using token auth instead
-      });
+      const response = await API.get("/student/profile");
 
       // Expecting the backend to return:
       // { name, srn, branch, semester, email, phone, cgpa, section, avatarUrl }
@@ -63,12 +61,13 @@ const Profile = () => {
     try {
       // Only email and phone are typically editable by the student;
       // academic fields usually come from the college's system.
-      const response = await axios.put(
-        PROFILE_URL,
-        { email: form.email, phone: form.phone },
-        { withCredentials: true }
-      );
-
+      const response = await API.put(
+"/student/profile",
+{
+    email:form.email,
+    phone:form.phone
+}
+);
       setStudent(response.data);
       setForm(response.data);
       setEditMode(false);

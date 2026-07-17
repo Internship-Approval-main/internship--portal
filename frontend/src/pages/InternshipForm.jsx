@@ -1,4 +1,4 @@
-import axios from "axios";
+import API from "../services/api";
 import { useState } from "react";
 import "./InternshipForm.css";
 
@@ -117,15 +117,15 @@ export default function InternshipForm() {
         formData.append("offerLetter", form.offerLetter);
       }
 
-      await axios.post(
-        "http://localhost:5000/api/student/register",
-        formData,
-        {
-          headers: {
+      await API.post(
+    "/student/register",
+    formData,
+    {
+        headers: {
             "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+        },
+    }
+);
 
       alert("Application Submitted Successfully!");
 

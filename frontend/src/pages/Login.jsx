@@ -34,7 +34,7 @@ const Login = () => {
       const { token, student } = response.data;
 
       if (token) {
-        localStorage.setItem("authToken", token);
+      localStorage.setItem("token", token);
       }
       if (student) {
         localStorage.setItem("student", JSON.stringify(student));

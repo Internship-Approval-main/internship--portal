@@ -5,15 +5,45 @@ exports.registerInternship = async (req, res) => {
 
     try {
 
+        const data = {
+
+            ...req.body
+
+        };
+        if (req.file) {
+    data.offer_letter = req.file.filename;
+}
+
+        // Automatically decide evaluation mode
+        if (data.company_evaluation === true || data.company_evaluation === "true") {
+
+            data.evaluation_mode = "Company";
+
+        } else {
+
+            data.evaluation_mode = "PES";
+
+        }
+
+        // Default workflow
+        data.status = "Submitted";
+
+        data.current_stage = "Scrutiny Verification";
+
         const internship = await Internship.findOneAndUpdate(
 
-            { srn: req.body.srn },
+            { srn: data.srn },
 
-            req.body,
+            data,
 
             {
+
                 upsert: true,
-                new: true
+
+                new: true,
+
+                runValidators: true
+
             }
 
         );
@@ -21,7 +51,9 @@ exports.registerInternship = async (req, res) => {
         res.status(201).json({
 
             success: true,
+
             message: "Internship Registered Successfully",
+
             internship
 
         });
@@ -33,6 +65,7 @@ exports.registerInternship = async (req, res) => {
         res.status(500).json({
 
             success: false,
+
             message: error.message
 
         });
@@ -40,11 +73,9 @@ exports.registerInternship = async (req, res) => {
     }
 
 };
-
 // Track Status
 exports.trackStatus = async (req, res) => {
-    console.log("trackStatus called");
-    console.log("SRN:", req.params.srn);
+
     try {
 
         const internship = await Internship.findOne({
@@ -58,6 +89,7 @@ exports.trackStatus = async (req, res) => {
             return res.status(404).json({
 
                 success: false,
+
                 message: "Internship not found"
 
             });
@@ -67,7 +99,34 @@ exports.trackStatus = async (req, res) => {
         res.status(200).json({
 
             success: true,
-            internship
+
+            data: {
+
+                status: internship.status,
+
+                stage: internship.current_stage,
+
+                scrutinyRemarks: internship.scrutiny_remarks,
+
+                facultyRemarks: internship.faculty_remarks,
+
+                grade: internship.grade,
+
+                credits: internship.credits,
+
+                evaluationMode: internship.evaluation_mode,
+
+                company: internship.company,
+
+                role: internship.role,
+
+                startDate: internship.start_date,
+
+                endDate: internship.end_date,
+
+                offerLetter: internship.offer_letter
+
+            }
 
         });
 
@@ -78,6 +137,7 @@ exports.trackStatus = async (req, res) => {
         res.status(500).json({
 
             success: false,
+
             message: error.message
 
         });
@@ -173,6 +233,127 @@ exports.requestNOC = async (req, res) => {
 
             success: false,
             message: error.message
+
+        });
+
+    }
+
+};
+
+// Get Student Profile
+exports.getProfile = async (req, res) => {
+
+    try {
+
+        const Student = require("../models/Student");
+
+        const student = await Student.findOne({
+
+            srn: req.student.srn
+
+        });
+
+        if (!student) {
+
+            return res.status(404).json({
+
+                message: "Student not found"
+
+            });
+
+        }
+
+        res.json({
+
+            name: student.student_name,
+
+            srn: student.srn,
+
+            branch: student.branch,
+
+            semester: student.semester,
+
+            email: student.student_email,
+
+            phone: student.phone,
+
+            cgpa: student.cgpa,
+
+            section: student.section
+
+        });
+
+    }
+
+    catch(err){
+
+        res.status(500).json({
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+
+// Update Profile
+exports.updateProfile = async (req,res)=>{
+
+    try{
+
+        const Student=require("../models/Student");
+
+        const student=await Student.findOne({
+
+            srn:req.student.srn
+
+        });
+
+        if(!student){
+
+            return res.status(404).json({
+
+                message:"Student not found"
+
+            });
+
+        }
+
+        student.student_email=req.body.email;
+
+        student.phone=req.body.phone;
+
+        await student.save();
+
+        res.json({
+
+            name: student.student_name,
+
+            srn: student.srn,
+
+            branch: student.branch,
+
+            semester: student.semester,
+
+            email: student.student_email,
+
+            phone: student.phone,
+
+            cgpa: student.cgpa,
+
+            section: student.section
+
+        });
+
+    }
+
+    catch(err){
+
+        res.status(500).json({
+
+            message:err.message
 
         });
 
