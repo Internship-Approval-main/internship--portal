@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const chatRoutes = require('./routes/chatRoutes');
 // Connect MongoDB
 connectDB();
 // Create Express App
@@ -24,7 +25,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-
+app.use('/api/chat', chatRoutes);
 // Default Route
 app.get("/", (req, res) => {
     res.send("🚀 Internship Management Backend Running!");
