@@ -9,6 +9,12 @@ from datetime import datetime
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
+import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 
@@ -31,7 +37,71 @@ db = client[MONGO_DB_NAME]
 collection = db[MONGO_COLLECTION_NAME]
 master_collection = db[MASTER_COLLECTION_NAME]
 
+def get_missing_students():
 
+    pipeline = [
+        {"$match": {"semester": "8"}},
+        {
+            "$lookup": {
+                "from": MONGO_COLLECTION_NAME,
+                "localField": "srn",
+                "foreignField": "srn",
+                "as": "submission"
+            }
+        },
+        {"$match": {"submission": {"$size": 0}}}
+    ]
+
+    return list(master_collection.aggregate(pipeline))
+def send_email(student_email, student_name, srn):
+
+    sender_email = os.getenv("EMAIL_USER")
+    sender_password = os.getenv("EMAIL_PASS")
+
+    message = MIMEMultipart()
+
+    message["From"] = sender_email
+    message["To"] = student_email
+    message["Subject"] = "Internship Submission Reminder"
+
+    body = f"""
+Dear {student_name},
+
+Our records show that you have not yet submitted your internship details.
+
+Please log in to the Internship Portal and complete your submission as soon as possible.
+
+SRN: {srn}
+
+Regards,
+Internship Management Team
+"""
+
+    message.attach(MIMEText(body, "plain"))
+
+    try:
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+
+        server.starttls()
+
+        server.login(sender_email, sender_password)
+
+        server.sendmail(
+            sender_email,
+            student_email,
+            message.as_string()
+        )
+
+        server.quit()
+
+        print(f"Email sent to {student_name}")
+        return True
+
+    except Exception as e:
+
+        print(f"Failed to send email to {student_name}: {e}")
+        return False
 # ==========================================
 # 1. THE SUB-BLUEPRINT (UPDATED VALIDATION)
 # ==========================================
@@ -167,20 +237,7 @@ async def save_student_internships(submission: StudentInternshipSubmission):
 # ==========================================
 @app.post("/admin/export-missing-students")
 async def export_missing_students():
-    pipeline = [
-        {"$match": {"semester": "8"}},
-        {
-            "$lookup": {
-                "from": MONGO_COLLECTION_NAME,
-                "localField": "srn",
-                "foreignField": "srn",
-                "as": "submission"
-            }
-        },
-        {"$match": {"submission": {"$size": 0}}}
-    ]
-
-    missing_students = list(master_collection.aggregate(pipeline))
+    missing_students = get_missing_students()
 
     if not missing_students:
         raise HTTPException(status_code=404, detail="All 8th semester students have submitted their details!")
@@ -194,3 +251,31 @@ async def export_missing_students():
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+@app.post("/admin/send-reminders")
+async def send_reminders():
+
+    missing_students = get_missing_students()
+
+    if not missing_students:
+        return {
+            "status": "success",
+            "emailsSent": 0,
+            "message": "All students have already submitted their internship details."
+        }
+
+    sent_count = 0
+
+    for student in missing_students:
+
+        if send_email(
+            student["student_email"],
+            student["student_name"],
+            student["srn"]
+        ):
+            sent_count += 1
+
+    return {
+        "status": "success",
+        "emailsSent": sent_count,
+        "message": "Reminder emails sent successfully."
+    }

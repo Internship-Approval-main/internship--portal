@@ -19,7 +19,7 @@ exports.verifyToken = (req, res, next) => {
 
         const decoded = jwt.verify(
             token,
-            "internship_secret_key"
+            process.env.JWT_SECRET
         );
         console.log("Decoded:", decoded);
         req.student = decoded;

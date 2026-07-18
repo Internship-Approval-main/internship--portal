@@ -22,7 +22,7 @@ const InternshipStatus = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [downloading, setDownloading] = useState(false);
+  
 
   useEffect(() => {
     fetchStatus();
@@ -62,7 +62,7 @@ setTimeline([
   }
 ]);
 
-setProgress(50);
+setProgress(data.data.progress);
     } catch (err) {
       setError(err.message || "Something went wrong while fetching status.");
     } finally {
@@ -70,32 +70,13 @@ setProgress(50);
     }
   };
 
-  const handleDownload = async () => {
-    setDownloading(true);
-    try {
-      const response = await fetch(`${API_URL}/report`, {
-  method: "GET"
-});
-      if (!response.ok) {
-        throw new Error("Report download failed.");
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "internship-report.pdf";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-    } catch (err) {
-      setError(err.message || "Could not download the report.");
-    } finally {
-      setDownloading(false);
-    }
-  };
-
+  const handleDownload = () => {
+  if (internship?.offerLetter) {
+    window.open(internship.offerLetter, "_blank");
+  } else {
+    alert("Offer Letter not available.");
+  }
+};
   if (loading) {
     return (
       <div className="status-page">
@@ -124,7 +105,7 @@ setProgress(50);
   }
 
   const statusClass = internship.status?.toLowerCase() || "pending";
-  const evaluationClass = internship.evaluation?.toLowerCase() || "pending";
+  
 
   return (
     <div className="status-page">
@@ -138,13 +119,12 @@ setProgress(50);
         </div>
 
         <button
-          className="download-btn"
-          onClick={handleDownload}
-          disabled={downloading}
-        >
-          <FaDownload />
-          {downloading ? "Preparing..." : "Download Report"}
-        </button>
+  className="download-btn"
+  onClick={handleDownload}
+>
+  <FaDownload />
+  View Offer Letter
+</button>
       </div>
 
       {/* Statistics */}
@@ -158,13 +138,12 @@ setProgress(50);
         </div>
 
         <div className="stat-card">
-          <FaCalendarAlt className="stat-icon orange" />
-          <div>
-            <h3>Duration</h3>
-            <span>{internship.duration}</span>
-          </div>
-        </div>
-
+  <FaCalendarAlt className="stat-icon orange" />
+  <div>
+    <h3>Start Date</h3>
+    <span>{internship.startDate || "-"}</span>
+  </div>
+</div>
         <div className="stat-card">
           <FaUniversity className="stat-icon blue" />
           <div>

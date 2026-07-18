@@ -95,7 +95,33 @@ exports.trackStatus = async (req, res) => {
             });
 
         }
+let progress = 0;
 
+switch (internship.current_stage) {
+
+    case "Submitted":
+        progress = 20;
+        break;
+
+    case "Scrutiny Verification":
+        progress = 40;
+        break;
+
+    case "Faculty Approval":
+        progress = 60;
+        break;
+
+    case "Manager Evaluation":
+        progress = 80;
+        break;
+
+    case "Completed":
+        progress = 100;
+        break;
+
+    default:
+        progress = 0;
+}
         res.status(200).json({
 
             success: true,
@@ -105,7 +131,7 @@ exports.trackStatus = async (req, res) => {
                 status: internship.status,
 
                 stage: internship.current_stage,
-
+                progress: progress,
                 scrutinyRemarks: internship.scrutiny_remarks,
 
                 facultyRemarks: internship.faculty_remarks,
@@ -125,6 +151,8 @@ exports.trackStatus = async (req, res) => {
                 endDate: internship.end_date,
 
                 offerLetter: internship.offer_letter
+    ? `http://localhost:5000/uploads/${internship.offer_letter}`
+    : null,
 
             }
 
