@@ -1,0 +1,286 @@
+.faculty-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f6f8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.faculty-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.list-container, .detail-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+.faculty-card {
+  background: white;
+  border-radius: 8px;
+  padding: 30px 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  border: 1px solid #eaeaea;
+}
+
+.header-section {
+  margin-bottom: 25px;
+}
+
+.faculty-card h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #0a2351; /* Primary PES blue */
+}
+
+.faculty-card p {
+  color: #555;
+  margin: 0;
+}
+
+/* Table styling */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-table th, .student-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.student-table th {
+  background-color: #fafafa;
+  color: #333;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.pending-approval { background-color: #fff3cd; color: #856404; }
+.status-badge.approved { background-color: #d4edda; color: #155724; }
+.status-badge.rejected { background-color: #f8d7da; color: #721c24; }
+
+.btn-action {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-action.primary { background-color: #0a2351; color: white; }
+.btn-action.primary:hover { background-color: #153a7a; }
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #0a2351;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 15px;
+  padding: 0;
+  font-size: 15px;
+}
+.btn-back:hover { text-decoration: underline; }
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eaeaea;
+  margin: 25px 0;
+}
+
+/* Detail View Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.info-box {
+  background-color: #fafafa;
+  padding: 20px;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+}
+
+.info-box.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-box h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.info-box p {
+  margin: 8px 0;
+  font-size: 14px;
+  color: #444;
+}
+
+/* Offer Letter Document Card */
+.offer-letter-box {
+  background-color: #f8f9ff;
+  border-left: 4px solid #0a2351;
+}
+
+.document-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 15px;
+  border: 1px solid #dce0e5;
+  border-radius: 6px;
+}
+
+.doc-icon {
+  font-size: 24px;
+  margin-right: 15px;
+}
+
+.doc-info {
+  flex: 1;
+}
+
+.doc-name {
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin: 0 !important;
+}
+
+.doc-sub {
+  font-size: 12px !important;
+  color: #888 !important;
+  margin: 0 !important;
+}
+
+.btn-view-doc {
+  background: transparent;
+  color: #0a2351;
+  border: 1px solid #0a2351;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-view-doc:hover {
+  background: #0a2351;
+  color: white;
+}
+
+/* Approval & Rejection Styling */
+.approval-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.status-notice {
+  width: 100%;
+  text-align: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  color: #555;
+  font-size: 15px;
+}
+
+.reject-reason-text {
+  color: #721c24;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.btn-approve {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+}
+.btn-approve:hover { background-color: #218838; }
+
+.btn-reject {
+  background-color: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 15px;
+}
+.btn-reject:hover { background-color: #fff5f5; }
+.btn-reject.confirm { background-color: #dc3545; color: white; }
+.btn-reject.confirm:hover { background-color: #c82333; }
+
+.btn-cancel {
+  background-color: transparent;
+  color: #666;
+  border: 1px solid #ccc;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reject-form {
+  width: 100%;
+  background: #fff5f5;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #f5c6cb;
+}
+
+.reject-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #721c24;
+}
+
+.reject-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  resize: vertical;
+  margin-bottom: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.reject-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.required {
+  color: red;
+}

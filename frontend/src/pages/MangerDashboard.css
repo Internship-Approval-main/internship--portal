@@ -1,0 +1,368 @@
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f6f8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+/* ------------------------
+   Student List Styles
+------------------------ */
+.list-container {
+  width: 100%;
+  max-width: 900px;
+}
+
+.large-card {
+  max-width: 100% !important;
+  text-align: left !important;
+}
+
+.header-section {
+  margin-bottom: 25px;
+}
+
+.header-section h2 {
+  margin-top: 0;
+  color: #0a2351;
+  margin-bottom: 5px;
+}
+
+.header-section p {
+  color: #555;
+  margin: 0;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-table th, .student-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.student-table th {
+  background-color: #fafafa;
+  color: #333;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.pending-evaluation { background-color: #fff3cd; color: #856404; }
+.status-badge.evaluated { background-color: #d4edda; color: #155724; }
+
+.btn-evaluate {
+  background-color: #0a2351;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-evaluate:hover:not(:disabled) {
+  background-color: #153a7a;
+}
+
+.btn-evaluate:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* ------------------------
+   Gateway & Form Cards
+------------------------ */
+.clean-card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  border: 1px solid #eaeaea;
+}
+
+.clean-form-container {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  max-width: 850px;
+  width: 100%;
+  border: 1px solid #eaeaea;
+}
+
+.form-header h2 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.form-header .subtitle {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 14px;
+}
+
+/* ------------------------
+   Form Layout & Spacing
+------------------------ */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px; 
+  margin-bottom: 25px; 
+}
+
+@media (max-width: 600px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px; 
+  font-weight: 500;
+}
+
+.input-group input, 
+.input-group textarea {
+  padding: 12px 15px;
+  border: 1px solid #cdd1d5; 
+  border-radius: 6px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  outline: none;
+  box-sizing: border-box; 
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-group input:focus:not([readonly]), 
+.input-group textarea:focus {
+  border-color: #673ab7;
+  box-shadow: 0 0 0 3px rgba(103, 58, 183, 0.1);
+}
+
+.input-group input::placeholder, 
+.input-group textarea::placeholder {
+  color: #a0a0a0;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #eaeaea;
+  margin: 35px 0;
+}
+
+.section-title h4 {
+  margin: 0 0 15px 0;
+  color: #222;
+  font-weight: 600;
+}
+
+.category-title {
+  color: #673ab7;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 20px 0 10px 0;
+}
+
+/* ------------------------
+   Horizontal Rating Rows
+------------------------ */
+.ratings-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rating-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.rating-label {
+  font-size: 14px;
+  color: #333;
+  flex: 1;
+  font-weight: 500;
+  padding-right: 20px;
+}
+
+.rating-options {
+  display: flex;
+  flex-direction: row;
+  gap: 30px; 
+  align-items: center;
+}
+
+.radio-label {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.radio-number {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.radio-label input[type="radio"] {
+  accent-color: #673ab7;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.required {
+  color: #d93025;
+}
+
+@media (max-width: 600px) {
+  .rating-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .rating-options {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ------------------------
+   Buttons
+------------------------ */
+.form-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); 
+  gap: 20px; 
+  margin-top: 40px;
+  padding-top: 25px;
+  border-top: 1px solid #eaeaea;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-back { background-color: #0a2351; color: white; }
+.btn-back:hover { background-color: #153a7a; }
+
+.btn-clear { background-color: #f2a900; color: white; }
+.btn-clear:hover { background-color: #d99700; }
+
+.btn-submit { background-color: #673ab7; color: white; }
+.btn-submit:hover { background-color: #5e35b1; }
+
+.gateway-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-primary {
+  background-color: #0a2351;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #444;
+  border: 1px solid #ccc;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.btn-text:hover {
+  color: #0a2351;
+  text-decoration: underline;
+}
+
+.back-top {
+  margin-bottom: 20px;
+  padding: 0;
+}
+
+.mt-2 { margin-top: 20px; }
+.mt-3 { margin-top: 30px; }
+
+@media (max-width: 500px) {
+  .form-actions-grid {
+    grid-template-columns: 1fr; 
+  }
+}

@@ -1,0 +1,203 @@
+.admin-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f6f8;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.admin-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.admin-card {
+  background: white;
+  border-radius: 8px;
+  padding: 30px 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  max-width: 1000px;
+  width: 100%;
+  border: 1px solid #eaeaea;
+}
+
+.header-section {
+  margin-bottom: 30px;
+}
+
+.header-section h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #0a2351; /* PES dark blue */
+}
+
+.header-section p {
+  color: #555;
+  margin: 0;
+}
+
+/* Tabs */
+.admin-tabs {
+  display: flex;
+  border-bottom: 2px solid #eaeaea;
+  margin-bottom: 25px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #888;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: 0.2s;
+}
+
+.tab-btn:hover {
+  color: #333;
+}
+
+.tab-btn.active {
+  color: #0a2351;
+  border-bottom-color: #f2a900; /* PES yellow/orange */
+}
+
+/* Tab Content Headers */
+.tab-header {
+  margin-bottom: 20px;
+}
+
+.tab-header h3 {
+  margin: 0 0 5px 0;
+  color: #222;
+}
+
+.tab-header p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Tables */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eaeaea;
+  font-size: 14px;
+}
+
+.admin-table th {
+  background-color: #fafafa;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Badges and Text */
+.role-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.role-badge.regular { background-color: #e2e3e5; color: #383d41; }
+.role-badge.scrutiny { background-color: #d4edda; color: #155724; }
+
+.text-muted {
+  color: #888;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.score-cell {
+  color: #555;
+}
+
+.score-cell strong {
+  color: #0a2351;
+  font-size: 15px;
+}
+
+.grade-badge {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.grade-s { background-color: #d4edda; color: #155724; } /* Green for S */
+.grade-a { background-color: #cce5ff; color: #004085; } /* Blue for A */
+.grade-b { background-color: #fff3cd; color: #856404; } /* Yellow for B */
+
+/* Buttons */
+.btn-action {
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 13px;
+}
+
+.btn-action.primary { background-color: #0a2351; color: white; }
+.btn-action.primary:hover { background-color: #153a7a; }
+
+.btn-download {
+  background-color: #28a745; /* Green for Excel */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
+}
+
+.btn-download:hover {
+  background-color: #218838;
+}
+
+.tab-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.block-btn {
+  padding: 12px 24px;
+  font-size: 15px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 650px) {
+  .flex-between {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
