@@ -10,7 +10,9 @@ import InternshipStatus from "./pages/InternshipStatus";
 import Notifications from "./pages/Notifications";
 
 import ChatbotPage from "./pages/ChatbotPage";
-
+import FacultyDashboard from "./pages/FacultyDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import ManagerDashboard from "./pages/ManagerDashboard";
 function App() {
   return (
     <BrowserRouter>
@@ -19,7 +21,35 @@ function App() {
 
         {/* Login Page (No Sidebar/Navbar/Footer) */}
         <Route path="/" element={<Login />} />
+{/* Faculty Dashboard */}
+<Route
+  path="/faculty"
+  element={
+    <Layout>
+      <FacultyDashboard />
+    </Layout>
+  }
+/>
 
+{/* Admin Dashboard */}
+<Route
+  path="/admin"
+  element={
+    <Layout>
+      <AdminDashboard />
+    </Layout>
+  }
+/>
+
+{/* Manager Dashboard */}
+<Route
+  path="/manager"
+  element={
+    <Layout>
+      <ManagerDashboard />
+    </Layout>
+  }
+/>
         {/* Dashboard */}
         <Route
           path="/dashboard"

@@ -71,7 +71,11 @@ const internshipSchema = new mongoose.Schema({
     offer_letter: String,
 
 
+stipend_type: String,
 
+offer_letter_url: String,
+internship_nature: String,
+duration: Number,
     // -------------------------
     // Evaluation
     // -------------------------
@@ -99,7 +103,14 @@ const internshipSchema = new mongoose.Schema({
     manager_contact: String,
 
 
+// -------------------------
+// Faculty Assignment
+// -------------------------
 
+assigned_faculty: {
+    type: String,
+    default: null
+},
     // -------------------------
     // Workflow
     // -------------------------

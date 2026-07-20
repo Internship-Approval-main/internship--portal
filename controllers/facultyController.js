@@ -1,54 +1,255 @@
-// View Applications
-exports.viewApplications = (req, res) => {
+const Internship = require("../models/Internship");
+const Student = require("../models/Student");
 
-    res.status(200).json({
-        success: true,
-        applications: [
-            {
-                id: 1,
-                student: "Manjushree",
-                company: "Microsoft",
-                status: "Pending"
-            },
-            {
-                id: 2,
-                student: "Rahul",
-                company: "Google",
-                status: "Pending"
-            }
-        ]
-    });
+
+// ===============================
+// View All Applications
+// ===============================
+exports.viewApplications = async (req, res) => {
+    try {
+
+        const internships = await Internship.find().sort({ createdAt: -1 });
+
+        const applications = await Promise.all(
+            internships.map(async (internship) => {
+
+                const student = await Student.findOne({
+                    srn: internship.srn
+                });
+
+                return {
+
+                    id: internship._id,
+
+                    name: internship.student_name,
+
+                    srn: internship.srn,
+
+                    sem: internship.semester,
+
+                    status: internship.status === "Submitted"
+                        ? "Pending Approval"
+                        : internship.status,
+
+                    registration: {
+
+                        company: internship.company,
+
+                        website: internship.company_website || "N/A",
+
+                        role: internship.role,
+
+                        type: internship.campus_type,
+
+                        startDate: internship.start_date,
+
+                        endDate: internship.end_date,
+
+                        cgpa: student?.cgpa || "-",
+
+                        stipend: internship.paid
+                            ? `Paid (${internship.stipend})`
+                            : "Unpaid",
+
+                        offerLetter: internship.offer_letter
+                            ? `http://localhost:5000/uploads/${internship.offer_letter}`
+                            : null
+
+                    }
+
+                };
+
+            })
+        );
+
+        res.status(200).json({
+
+            success: true,
+
+            students: applications
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };
 
+
+// ===============================
 // Approve Internship
-exports.approveApplication = (req, res) => {
+// ===============================
+exports.approveApplication = async (req, res) => {
 
-    res.status(200).json({
-        success: true,
-        message: "Internship Approved"
-    });
+    try {
+
+        const internship = await Internship.findById(req.params.id);
+
+        if (!internship) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Internship not found"
+
+            });
+
+        }
+
+        internship.status = "Approved";
+
+        internship.current_stage = "Faculty Approval";
+
+        await internship.save();
+
+        res.json({
+
+            success: true,
+
+            message: "Internship Approved Successfully"
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };
 
+
+// ===============================
 // Reject Internship
-exports.rejectApplication = (req, res) => {
+// ===============================
+exports.rejectApplication = async (req, res) => {
 
-    res.status(200).json({
-        success: true,
-        message: "Internship Rejected"
-    });
+    try {
+
+        const internship = await Internship.findById(req.params.id);
+
+        if (!internship) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Internship not found"
+
+            });
+
+        }
+
+        internship.status = "Rejected";
+
+        internship.faculty_remarks = req.body.reason;
+
+        await internship.save();
+
+        res.json({
+
+            success: true,
+
+            message: "Internship Rejected Successfully"
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };
 
-// Assign Grade
-exports.assignGrade = (req, res) => {
 
-    const { grade } = req.body;
+// ===============================
+// Assign Grade & Credits
+// ===============================
+exports.assignGrade = async (req, res) => {
 
-    res.status(200).json({
-        success: true,
-        message: `Grade ${grade} Assigned Successfully`
-    });
+    try {
+
+        const {
+
+            id,
+
+            grade,
+
+            credits
+
+        } = req.body;
+
+        const internship = await Internship.findById(id);
+
+        if (!internship) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Internship not found"
+
+            });
+
+        }
+
+        internship.grade = grade;
+
+        internship.credits = credits;
+
+        internship.current_stage = "Completed";
+
+        await internship.save();
+
+        res.json({
+
+            success: true,
+
+            message: "Grade Assigned Successfully"
+
+        });
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };

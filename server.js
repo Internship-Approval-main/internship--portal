@@ -9,6 +9,8 @@ const studentRoutes = require("./routes/studentRoutes");
 const facultyRoutes = require("./routes/facultyRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const chatRoutes = require('./routes/chatRoutes');
+const adminRoutes = require("./routes/adminRoutes");
+const managerRoutes = require("./routes/managerRoutes");
 // Connect MongoDB
 connectDB();
 // Create Express App
@@ -24,8 +26,10 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/auth", authRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use('/api/chat', chatRoutes);
+app.use("/api/manager", managerRoutes);
 // Default Route
 app.get("/", (req, res) => {
     res.send("🚀 Internship Management Backend Running!");

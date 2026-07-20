@@ -1,13 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ManagerDashboard.css";
+const API_URL = "http://localhost:5000/api/manager";
 
 const ManagerDashboard = () => {
   // Mock list of students assigned to this manager
-  const [students, setStudents] = useState([
-    { id: 1, name: "Aditya Narayan", srn: "PES1UG22CS101", status: "Pending Evaluation" },
-    { id: 2, name: "Meghana Rao", srn: "PES1UG22CS205", status: "Evaluated" },
-    { id: 3, name: "Rohan Kumar", srn: "PES1UG22CS312", status: "Pending Evaluation" },
-  ]);
+  const [students, setStudents] = useState([]);
 
   // View States
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -35,6 +32,27 @@ const ManagerDashboard = () => {
     overallRating: "",
     valuableSuggestion: "",
   });
+  
+const fetchStudents = async () => {
+
+    try {
+
+        const response = await fetch(`${API_URL}/students`);
+
+        const data = await response.json();
+
+        if (data.success) {
+            setStudents(data.students);
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+
+};
+useEffect(() => {
+    fetchStudents();
+}, []);
 
   // Handlers
   const handleEvaluateClick = (student) => {
@@ -61,20 +79,112 @@ const ManagerDashboard = () => {
   const handleRatingChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+const updateEvaluationMode = async (mode) => {
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Submitting Feedback Data:", formData);
-    alert(`Feedback for ${selectedStudent.name} submitted successfully!`);
+  try {
 
-    // Update student status in the list
-    setStudents((prev) =>
-      prev.map((s) => (s.id === selectedStudent.id ? { ...s, status: "Evaluated" } : s))
+    const response = await fetch(
+      `${API_URL}/evaluation-mode/${selectedStudent.id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          evaluationMode: mode,
+        }),
+      }
     );
 
-    // Return to list view
-    handleBackToList();
-  };
+    const data = await response.json();
+
+    if (data.success) {
+      setReportDecision(mode.toLowerCase());
+    } else {
+      alert(data.message);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Unable to update evaluation mode.");
+  }
+
+};
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    try {
+
+        const response = await fetch(`${API_URL}/evaluate`, {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                internshipId: selectedStudent.id,
+
+                confidenceLevel: formData.confidenceLevel,
+
+                proactiveApproach: formData.proactiveApproach,
+
+                graspConcepts: formData.graspConcepts,
+
+                skillSetMaturity: formData.skillSetMaturity,
+
+                deliveryOfWork: formData.deliveryOfWork,
+
+                qualityOfDocs: formData.qualityOfDocs,
+
+                oralCommunication: formData.oralCommunication,
+
+                teamCoordination: formData.teamCoordination,
+
+                buildRapport: formData.buildRapport,
+
+                overallRating: formData.overallRating,
+
+                suggestion: formData.valuableSuggestion
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+
+            alert(
+                `Evaluation Submitted!\n\nTotal Marks: ${data.totalMarks}\nGrade: ${data.grade}`
+            );
+
+            fetchStudents();
+
+            handleBackToList();
+
+        }
+
+        else {
+
+            alert(data.message);
+
+        }
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        alert("Failed to submit evaluation.");
+
+    }
+
+};
 
   const clearForm = () => {
     if (window.confirm("Are you sure you want to clear the form?")) {
@@ -185,10 +295,10 @@ const ManagerDashboard = () => {
             <p>For <strong>{selectedStudent.name}</strong> ({selectedStudent.srn})</p>
             <p className="mt-2">Has the company agreed to provide Internship Evaluation?</p>
             <div className="gateway-buttons mt-3">
-              <button className="btn-primary" onClick={() => setReportDecision('company')}>
+              <button className="btn-primary" onClick={() => updateEvaluationMode("Company")}>
                 Yes,Company will provide report
               </button>
-              <button className="btn-outline" onClick={() => setReportDecision('college')}>
+              <button className="btn-outline" onClick={() => updateEvaluationMode("PES")}>
                 NO, College will handle the report
               </button>
             </div>
@@ -338,4 +448,4 @@ const ManagerDashboard = () => {
   );
 };
 
-export default ManagerDashboard;s
+export default ManagerDashboard;

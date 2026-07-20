@@ -1,78 +1,171 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 
+const API_URL = "http://localhost:5000/api/faculty";
+
 const FacultyDashboard = () => {
-  // Mock data representing students applying for internship credits
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      name: "Aditya Narayan",
-      srn: "PES1UG22CS101",
-      sem: "6",
-      status: "Pending Approval",
-      registration: {
-        company: "TechNova Solutions",
-        website: "https://technova.io",
-        role: "Frontend Developer Intern",
-        type: "Off-Campus",
-        startDate: "16-01-2026",
-        endDate: "16-07-2026",
-        cgpa: "8.5",
-        stipend: "Paid (₹20,000/month)",
-        offerLetter: "Aditya_OfferLetter_TechNova.pdf"
-      }
-    },
-    {
-      id: 2,
-      name: "Meghana Rao",
-      srn: "PES1UG22CS205",
-      sem: "6",
-      status: "Approved", 
-      registration: {
-        company: "PESU Research Lab",
-        website: "N/A",
-        role: "Data Science Intern",
-        type: "On-Campus",
-        startDate: "01-02-2026",
-        endDate: "01-06-2026",
-        cgpa: "9.2",
-        stipend: "Unpaid",
-        offerLetter: "Meghana_OnCampus_Approval.pdf"
-      }
-    },
-  ]);
+
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [showRejectBox, setShowRejectBox] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
 
-  const handleOpenDetails = (student) => {
-    setSelectedStudent(student);
-    setShowRejectBox(false);
-    setRejectReason("");
-  };
+  // ==========================
+  // Fetch applications
+  // ==========================
+  useEffect(() => {
+    fetchApplications();
+  }, []);
 
-  const handleApprove = () => {
-    setStudents((prev) =>
-      prev.map((s) => (s.id === selectedStudent.id ? { ...s, status: "Approved" } : s))
-    );
-    alert(`${selectedStudent.name}'s internship has been APPROVED for credits.`);
-    setSelectedStudent(null);
-  };
+  const fetchApplications = async () => {
+    try {
 
-  const handleReject = () => {
-    if (!rejectReason.trim()) {
-      alert("Please provide a reason for rejecting the internship.");
-      return;
+      const response = await fetch(`${API_URL}/applications`);
+
+      const data = await response.json();
+
+      if (data.success) {
+        setStudents(data.students);
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Unable to load internship applications.");
     }
-    setStudents((prev) =>
-      prev.map((s) => (s.id === selectedStudent.id ? { ...s, status: "Rejected", rejectReason } : s))
-    );
-    alert(`${selectedStudent.name}'s internship has been REJECTED.`);
-    setSelectedStudent(null);
+
+    setLoading(false);
   };
 
+  // ==========================
+  // Open Details
+  // ==========================
+  const handleOpenDetails = (student) => {
+
+    setSelectedStudent(student);
+
+    setShowRejectBox(false);
+
+    setRejectReason("");
+
+  };
+
+  // ==========================
+  // Approve
+  // ==========================
+  const handleApprove = async () => {
+
+    try {
+
+      const response = await fetch(
+
+        `${API_URL}/approve/${selectedStudent.id}`,
+
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+
+        alert("Internship Approved Successfully");
+
+        fetchApplications();
+
+        setSelectedStudent(null);
+
+      }
+
+    }
+
+    catch (err) {
+
+      console.error(err);
+
+      alert("Approval failed.");
+
+    }
+
+  };
+
+  // ==========================
+  // Reject
+  // ==========================
+  const handleReject = async () => {
+
+    if (!rejectReason.trim()) {
+
+      alert("Please enter rejection remarks.");
+
+      return;
+
+    }
+
+    try {
+
+      const response = await fetch(
+
+        `${API_URL}/reject/${selectedStudent.id}`,
+
+        {
+
+          method: "PUT",
+
+          headers: {
+
+            "Content-Type": "application/json"
+
+          },
+
+          body: JSON.stringify({
+
+            reason: rejectReason
+
+          })
+
+        }
+
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+
+        alert("Internship Rejected.");
+
+        fetchApplications();
+
+        setSelectedStudent(null);
+
+      }
+
+    }
+
+    catch (err) {
+
+      console.error(err);
+
+      alert("Rejection failed.");
+
+    }
+
+  };
+
+  // ==========================
+  // Loading Screen
+  // ==========================
+  if (loading) {
+
+    return <h2 style={{ textAlign: "center" }}>Loading Applications...</h2>;
+
+  }
   return (
     <div className="faculty-layout">
       
@@ -165,9 +258,21 @@ const FacultyDashboard = () => {
                       <p className="doc-name">{selectedStudent.registration.offerLetter}</p>
                       <p className="doc-sub">PDF Document</p>
                     </div>
-                    <button className="btn-view-doc" onClick={(e) => { e.preventDefault(); alert("Opening document viewer..."); }}>
-                      View Document
-                    </button>
+                    <button
+  className="btn-view-doc"
+  onClick={() => {
+    if (selectedStudent.registration.offerLetter) {
+      window.open(
+        selectedStudent.registration.offerLetter,
+        "_blank"
+      );
+    } else {
+      alert("Offer Letter not uploaded.");
+    }
+  }}
+>
+  View Document
+</button>
                   </div>
                 </div>
 

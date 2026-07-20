@@ -1,25 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./AdminDashboard.css";
-
+const API_URL = "http://localhost:5000/api/admin";
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("faculty");
 
-  // Mock data for Faculty Management
-  const [teachers, setTeachers] = useState([
-    { id: 1, name: "Dr. Anil Kumar", email: "anil.kumar@pes.edu", department: "CSE", role: "Regular Faculty" },
-    { id: 2, name: "Prof. Sunitha V.", email: "sunitha.v@pes.edu", department: "CSE", role: "Scrutiny Faculty" },
-    { id: 3, name: "Dr. Ramesh B.", email: "ramesh.b@pes.edu", department: "ECE", role: "Regular Faculty" },
-  ]);
+  const [teachers, setTeachers] = useState([]);
+const [students, setStudents] = useState([]);
+useEffect(() => {
+  fetchFaculty();
+  fetchStudents();
+}, []);
+const fetchFaculty = async () => {
 
-  // Mock data for Student Overview
-  const [students, setStudents] = useState([
-    { id: 1, name: "Aditya Narayan", srn: "PES1UG22CS101", managerScore: 45, grade: "S", credits: 4 },
-    { id: 2, name: "Meghana Rao", srn: "PES1UG22CS205", managerScore: 48, grade: "S", credits: 4 },
-    { id: 3, name: "Rohan Kumar", srn: "PES1UG22CS312", managerScore: 35, grade: "B", credits: 4 },
-    { id: 4, name: "Sneha Reddy", srn: "PES1UG22CS441", managerScore: 42, grade: "A", credits: 4 },
-  ]);
+  try {
+
+    const response = await fetch(`${API_URL}/faculty`);
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      setTeachers(data.teachers);
+
+    }
+
+  }
+
+  catch (err) {
+
+    console.error(err);
+
+    alert("Unable to load faculty.");
+
+  }
+
+};
+const fetchStudents = async () => {
+
+  try {
+
+    const response = await fetch(`${API_URL}/student-overview`);
+
+    const data = await response.json();
+
+    if (data.success) {
+
+      setStudents(data.students);
+
+    }
+
+  }
+
+  catch (err) {
+
+    console.error(err);
+
+    alert("Unable to load students.");
+
+  }
+
+};
 
   // Handle Inviting a Teacher
   const handleInvite = (teacher) => {

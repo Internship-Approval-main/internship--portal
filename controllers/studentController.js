@@ -10,9 +10,19 @@ exports.registerInternship = async (req, res) => {
             ...req.body
 
         };
+
         if (req.file) {
-    data.offer_letter = req.file.filename;
-}
+
+            data.offer_letter = req.file.filename;
+
+        }
+        if (data.campus_type === "On Campus") {
+
+            data.manager_name = data.mentor_name;
+
+            data.manager_email = data.mentor_email;
+
+        }
 
         // Automatically decide evaluation mode
         if (data.company_evaluation === true || data.company_evaluation === "true") {
@@ -25,9 +35,52 @@ exports.registerInternship = async (req, res) => {
 
         }
 
-        // Default workflow
-        data.status = "Submitted";
+        // ======================================
+        // Automatic Approval Logic
+        // ======================================
 
+        const exemptInstitutions = ["IIT", "NIT", "IISC", "IIIT"];
+
+        const company = (data.company || "").toUpperCase();
+
+        const campusType = (data.campus_type || "").toLowerCase();
+
+        const internshipNature = (data.internship_nature || "").toLowerCase();
+
+        const isExempt = exemptInstitutions.some(inst =>
+            company.includes(inst)
+        );
+
+        if (isExempt) {
+
+            data.status = "Approved";
+
+        }
+
+        else if (campusType === "off campus") {
+
+            data.status = "Pending Approval";
+
+        }
+
+        else if (
+
+    campusType === "on campus" &&
+    internshipNature === "unpaid"
+
+) {
+
+            data.status = "Pending Approval";
+
+        }
+
+        else {
+
+            data.status = "Approved";
+
+        }
+
+        // Next workflow stage
         data.current_stage = "Scrutiny Verification";
 
         const internship = await Internship.findOneAndUpdate(
