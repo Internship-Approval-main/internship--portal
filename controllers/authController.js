@@ -1,33 +1,108 @@
 const jwt = require("jsonwebtoken");
+
 const Student = require("../models/Student");
+const Faculty = require("../models/Faculty");
+const Manager = require("../models/Manager");
+const Admin = require("../models/Admin");
 
 exports.login = async (req, res) => {
 
     try {
 
-        const { srn, password } = req.body;
+        const { role, identifier, password } = req.body;
 
-        if (!srn || !password) {
+        if (!role || !identifier || !password) {
 
             return res.status(400).json({
                 success: false,
-                message: "SRN and Password are required"
+                message: "Missing login credentials."
             });
 
         }
 
-        const student = await Student.findOne({ srn });
+        let user = null;
+        let payload = {};
 
-        if (!student) {
+        switch (role) {
 
-            return res.status(404).json({
-                success: false,
-                message: "Student not found"
-            });
+            case "Student":
+
+                user = await Student.findOne({ srn: identifier });
+
+                if (!user)
+                    return res.status(404).json({
+                        success: false,
+                        message: "Student not found"
+                    });
+
+                payload = {
+                    srn: user.srn,
+                    role: "Student"
+                };
+
+                break;
+
+            case "Faculty":
+
+                user = await Faculty.findOne({ email: identifier });
+
+                if (!user)
+                    return res.status(404).json({
+                        success: false,
+                        message: "Faculty not found"
+                    });
+
+                payload = {
+                    email: user.email,
+                    role: "Faculty"
+                };
+
+                break;
+
+            case "Manager":
+
+                user = await Manager.findOne({ email: identifier });
+
+                if (!user)
+                    return res.status(404).json({
+                        success: false,
+                        message: "Manager not found"
+                    });
+
+                payload = {
+                    email: user.email,
+                    role: "Manager"
+                };
+
+                break;
+
+            case "Admin":
+
+                user = await Admin.findOne({ email: identifier });
+
+                if (!user)
+                    return res.status(404).json({
+                        success: false,
+                        message: "Admin not found"
+                    });
+
+                payload = {
+                    email: user.email,
+                    role: "Admin"
+                };
+
+                break;
+
+            default:
+
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid role"
+                });
 
         }
 
-        if (student.password !== password) {
+        if (user.password !== password) {
 
             return res.status(401).json({
                 success: false,
@@ -36,34 +111,21 @@ exports.login = async (req, res) => {
 
         }
 
-        // Generate JWT
         const token = jwt.sign(
-            {
-                srn: student.srn
-            },
+            payload,
             process.env.JWT_SECRET,
-            {
-                expiresIn: "1d"
-            }
+            { expiresIn: "1d" }
         );
 
-        // Send response
         res.status(200).json({
 
             success: true,
+
             message: "Login Successful",
 
             token,
 
-            student: {
-
-                srn: student.srn,
-                student_name: student.student_name,
-                student_email: student.student_email,
-                semester: student.semester,
-                cgpa: student.cgpa
-
-            }
+            user
 
         });
 
@@ -74,6 +136,7 @@ exports.login = async (req, res) => {
         res.status(500).json({
 
             success: false,
+
             message: error.message
 
         });

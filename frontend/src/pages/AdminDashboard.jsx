@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+
 import "./AdminDashboard.css";
 const API_URL = "http://localhost:5000/api/admin";
 const AdminDashboard = () => {
@@ -82,7 +81,15 @@ const fetchStudents = async () => {
     // Map student data to CSV format
     const csvContent = [
       headers.join(","),
-      ...students.map(s => `"${s.name}","${s.srn}","${s.managerScore}","${s.grade}","${s.credits}"`)
+      ...students.map(s => `"${s.name}","${s.srn}","${s.managerScore}","${s.grade}","${
+  s.grade === "A+" || s.grade === "A"
+    ? 8
+    : s.grade === "B+"
+    ? 6
+    : s.grade === "B"
+    ? 4
+    : "-"
+}"`)
     ].join("\n");
 
     // Create a downloadable blob
@@ -101,7 +108,7 @@ const fetchStudents = async () => {
 
   return (
     <div className="admin-layout">
-      <Navbar />
+      
       <div className="admin-content">
         <div className="admin-card">
           
@@ -213,7 +220,15 @@ const fetchStudents = async () => {
                             {student.grade}
                           </span>
                         </td>
-                        <td>{student.credits}</td>
+                        <td>
+  {student.grade === "A+" || student.grade === "A"
+    ? 8
+    : student.grade === "B+"
+    ? 6
+    : student.grade === "B"
+    ? 4
+    : "-"}
+</td>
                       </tr>
                     ))}
                   </tbody>
@@ -227,7 +242,7 @@ const fetchStudents = async () => {
 
         </div>
       </div>
-      <Footer />
+      
     </div>
   );
 };

@@ -28,4 +28,7 @@ router.put(
     verifyToken,
     studentController.updateProfile
 );
-module.exports = router;
+module.exports = router; 
+
+
+

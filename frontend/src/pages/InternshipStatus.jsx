@@ -26,50 +26,75 @@ const InternshipStatus = () => {
 
   useEffect(() => {
     fetchStatus();
-  }, []);
-const student = JSON.parse(localStorage.getItem("student"));
-const srn = student?.srn;
+}, []);
+
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+    return (
+        <div className="status-page">
+            <p>Please login again.</p>
+        </div>
+    );
+}
+
+const srn = user.srn;
   const fetchStatus = async () => {
+
     setLoading(true);
     setError("");
 
     try {
-      const token = localStorage.getItem("token");
 
-const response = await fetch(`${API_URL}/${srn}`, {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`
-  }
-});
-      if (!response.ok) {
-        throw new Error("Unable to load internship status.");
-      }
+        const token = localStorage.getItem("authToken");
 
-      const data = await response.json();
-       console.log(data);
-      // Expecting the backend to return: { internship, timeline, progress }
-      setInternship(data.data);
-console.log("Internship:", data.data);
-setTimeline([
-  {
-    title: "Application Submitted",
-    completed: true
-  },
-  {
-    title: data.data.stage,
-    completed: true
-  }
-]);
+        if (!token) {
+            throw new Error("Please login again.");
+        }
 
-setProgress(data.data.progress);
+        const response = await fetch(`${API_URL}/${srn}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Unable to load internship status.");
+        }
+
+        const data = await response.json();
+
+        console.log(data);
+
+        setInternship(data.data);
+
+        setTimeline([
+            {
+                title: "Application Submitted",
+                completed: true
+            },
+            {
+                title: data.data.stage,
+                completed: true
+            }
+        ]);
+
+        setProgress(data.data.progress);
+
     } catch (err) {
-      setError(err.message || "Something went wrong while fetching status.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
+        console.error(err);
+
+        setError(err.message || "Something went wrong while fetching status.");
+
+    } finally {
+
+        setLoading(false);
+
+    }
+
+};
   const handleDownload = () => {
   if (internship?.offerLetter) {
     window.open(internship.offerLetter, "_blank");

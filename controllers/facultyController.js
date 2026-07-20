@@ -202,8 +202,6 @@ exports.assignGrade = async (req, res) => {
 
             id,
 
-            grade,
-
             credits
 
         } = req.body;
@@ -222,9 +220,9 @@ exports.assignGrade = async (req, res) => {
 
         }
 
-        internship.grade = grade;
-
         internship.credits = credits;
+
+        internship.status = "Completed";
 
         internship.current_stage = "Completed";
 
@@ -234,7 +232,7 @@ exports.assignGrade = async (req, res) => {
 
             success: true,
 
-            message: "Grade Assigned Successfully"
+            message: "Internship Finalized Successfully"
 
         });
 

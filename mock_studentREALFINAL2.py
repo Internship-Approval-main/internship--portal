@@ -32,12 +32,12 @@ app.add_middleware(
 # MongoDB Connection Setup
 MONGO_DB_NAME = "internship_db"
 MONGO_COLLECTION_NAME = "internship_records"
-MASTER_COLLECTION_NAME = "master_database"
+STUDENT_COLLECTION_NAME = "student"
 
 client = pymongo.MongoClient("mongodb://localhost:27017/")
 db = client[MONGO_DB_NAME]
 collection = db[MONGO_COLLECTION_NAME]
-master_collection = db[MASTER_COLLECTION_NAME]
+student_collection = db[STUDENT_COLLECTION_NAME]
 
 def get_missing_students():
 
@@ -54,7 +54,7 @@ def get_missing_students():
         {"$match": {"submission": {"$size": 0}}}
     ]
 
-    return list(master_collection.aggregate(pipeline))
+    return list(student_collection.aggregate(pipeline))
 def send_email(student_email, student_name, srn):
 
     sender_email = os.getenv("EMAIL_USER")

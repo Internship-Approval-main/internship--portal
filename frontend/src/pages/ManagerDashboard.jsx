@@ -99,14 +99,25 @@ const updateEvaluationMode = async (mode) => {
     const data = await response.json();
 
     if (data.success) {
-      setReportDecision(mode.toLowerCase());
+
+      if (mode === "Company") {
+        setReportDecision("company");
+      } else {
+        // User clicked NO
+        handleBackToList();
+      }
+
     } else {
+
       alert(data.message);
+
     }
 
   } catch (err) {
+
     console.error(err);
     alert("Unable to update evaluation mode.");
+
   }
 
 };

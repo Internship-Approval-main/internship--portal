@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Navbar from "../components/Navbar";
+
 import './Dashboard.css'
 
 // Change this to your backend's actual endpoint
@@ -21,17 +21,26 @@ export default function Dashboard() {
 
   try {
 
-    const student = JSON.parse(localStorage.getItem("student"));
+    // Get logged in user
+    const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+  throw new Error("Please login again.");
+}
+
 const token = localStorage.getItem("authToken");
 
 const response = await fetch(
-  `${API_URL}?srn=${student.srn}`,
+  `${API_URL}?srn=${user.srn}`,
   {
     headers: {
       Authorization: `Bearer ${token}`
     }
   }
 );
+    
+
+    
 
     if (!response.ok) {
       throw new Error("Unable to load dashboard data.");
@@ -43,6 +52,7 @@ const response = await fetch(
 
   } catch (err) {
 
+    console.error(err);
     setError(err.message || "Something went wrong while loading the dashboard.");
 
   } finally {
@@ -52,7 +62,6 @@ const response = await fetch(
   }
 
 };
-  
 
   return (
     <>

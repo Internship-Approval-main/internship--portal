@@ -1,13 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Layout from "./components/Layout";
+import LayoutStudent from "./components/LayoutStudent";
+import LayoutFaculty from "./components/LayoutFaculty";
+import LayoutManager from "./components/LayoutManager";
+import LayoutAdmin from "./components/LayoutAdmin";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import InternshipForm from "./pages/InternshipForm";
 import InternshipStatus from "./pages/InternshipStatus";
-import Notifications from "./pages/Notifications";
+
 
 import ChatbotPage from "./pages/ChatbotPage";
 import FacultyDashboard from "./pages/FacultyDashboard";
@@ -25,9 +28,9 @@ function App() {
 <Route
   path="/faculty"
   element={
-    <Layout>
+    <LayoutFaculty>
       <FacultyDashboard />
-    </Layout>
+    </LayoutFaculty>
   }
 />
 
@@ -35,9 +38,9 @@ function App() {
 <Route
   path="/admin"
   element={
-    <Layout>
+    <LayoutAdmin>
       <AdminDashboard />
-    </Layout>
+    </LayoutAdmin>
   }
 />
 
@@ -45,60 +48,52 @@ function App() {
 <Route
   path="/manager"
   element={
-    <Layout>
+    <LayoutManager>
       <ManagerDashboard />
-    </Layout>
+    </LayoutManager>
   }
 />
         {/* Dashboard */}
         <Route
-          path="/dashboard"
-          element={
-            <Layout>
-              <Dashboard />
-            </Layout>
-          }
-        />
-
+  path="/dashboard"
+  element={
+    <LayoutStudent>
+      <Dashboard />
+    </LayoutStudent>
+  }
+/>
         {/* Profile */}
         <Route
-          path="/profile"
-          element={
-            <Layout>
-              <Profile />
-            </Layout>
-          }
-        />
+  path="/profile"
+  element={
+    <LayoutStudent>
+      <Profile />
+    </LayoutStudent>
+  }
+/>
 
         {/* Internship Form */}
         <Route
-          path="/internship-form"
-          element={
-            <Layout>
-              <InternshipForm />
-            </Layout>
-          }
-        />
+  path="/internship-form"
+  element={
+    <LayoutStudent>
+      <InternshipForm />
+    </LayoutStudent>
+  }
+/>
 
         {/* Internship Status */}
         <Route
           path="/status"
           element={
-            <Layout>
-              <InternshipStatus />
-            </Layout>
+            <LayoutStudent><InternshipStatus />
+            </LayoutStudent>
+              
+            
           }
         />
 
-        {/* Notifications */}
-        <Route
-          path="/notifications"
-          element={
-            <Layout>
-              <Notifications />
-            </Layout>
-          }
-        />
+        
 
         
         
@@ -108,9 +103,9 @@ function App() {
         <Route
           path="/chatbot"
           element={
-            <Layout>
+            <LayoutStudent>
               <ChatbotPage />
-            </Layout>
+            </LayoutStudent>
           }
         />
 

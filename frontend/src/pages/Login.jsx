@@ -50,41 +50,48 @@ const Login = () => {
 
     // Dynamically set the API endpoint based on the selected role
     // Adjust these endpoints to match your actual backend routes
-    const API_URL = `http://localhost:5000/api/auth/${activeRole.toLowerCase()}/login`;
+    const API_URL = "http://localhost:5000/api/auth/login";
 
     try {
       // Sending the identifier (SRN/Email/ID) and password
-      const response = await axios.post(API_URL, { identifier, password });
+      const response = await axios.post(API_URL, {
+    role: activeRole,
+    identifier,
+    password
+});
       
       // Assuming backend returns { token, user }
-      const { token, user } = response.data;
+     const { token, user } = response.data;
 
-      if (token) {
-        localStorage.setItem("authToken", token);
-      }
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("userRole", activeRole);
-      }
+if (token) {
+    localStorage.setItem("authToken", token);
+}
 
+if (user) {
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("userRole", activeRole);
+}
       // Redirect to the respective dashboard based on role
       switch (activeRole) {
-        case "Student":
-          navigate("/student-dashboard");
-          break;
-        case "Manager":
-          navigate("/manager-dashboard");
-          break;
-        case "Faculty":
-          navigate("/faculty-dashboard");
-          break;
-        case "Admin":
-          navigate("/admin-dashboard");
-          break;
-        default:
-          navigate("/");
-      }
+  case "Student":
+    navigate("/dashboard");
+    break;
 
+  case "Manager":
+    navigate("/manager");
+    break;
+
+  case "Faculty":
+    navigate("/faculty");
+    break;
+
+  case "Admin":
+    navigate("/admin");
+    break;
+
+  default:
+    navigate("/");
+}
       // Fallback if not using react-router-dom:
       // window.location.href = `/${activeRole.toLowerCase()}-dashboard`;
 

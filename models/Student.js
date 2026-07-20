@@ -19,5 +19,5 @@ const studentSchema = new mongoose.Schema({
 module.exports = mongoose.model(
     "Student",
     studentSchema,
-    "master_database"
+    "student"
 );
