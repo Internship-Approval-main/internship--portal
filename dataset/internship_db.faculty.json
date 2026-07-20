@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "6a5da88b9a7dc5af1464f097"
+  },
+  "faculty_id": "FAC001",
+  "name": "Dr. Ramesh Kumar",
+  "email": "ramesh.kumar@pes.edu",
+  "department": "Computer Science & Engineering",
+  "role": "Professor & HOD",
+  "password": "hashed_password_123"
+},
+{
+  "_id": {
+    "$oid": "6a5da88b9a7dc5af1464f098"
+  },
+  "faculty_id": "FAC002",
+  "name": "Dr. Priya Sharma",
+  "email": "priya.sharma@pes.edu",
+  "department": "Computer Science & Engineering",
+  "role": "Associate Professor",
+  "password": "hashed_password_456"
+},
+{
+  "_id": {
+    "$oid": "6a5da88b9a7dc5af1464f099"
+  },
+  "faculty_id": "FAC003",
+  "name": "Prof. Anand Verma",
+  "email": "anand.verma@pes.edu",
+  "department": "Information Science & Engineering",
+  "role": "Assistant Professor",
+  "password": "hashed_password_789"
+},
+{
+  "_id": {
+    "$oid": "6a5da88b9a7dc5af1464f09a"
+  },
+  "faculty_id": "FAC004",
+  "name": "Dr. Sunita Rao",
+  "email": "sunita.rao@pes.edu",
+  "department": "Artificial Intelligence & ML",
+  "role": "Associate Professor",
+  "password": "hashed_password_321"
+}]

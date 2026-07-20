@@ -1,0 +1,7 @@
+[{
+  "_id": {
+    "$oid": "6a5daaf49a7dc5af1464f0aa"
+  },
+  "email": "vikram.m@technova.com",
+  "password": "hashed_password_mgr123"
+}]

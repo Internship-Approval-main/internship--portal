@@ -1,0 +1,7 @@
+[{
+  "_id": {
+    "$oid": "6a5dab2e9a7dc5af1464f0b0"
+  },
+  "email": "admin_1@pesu.edu",
+  "password": "hashed_password_adm6767"
+}]
